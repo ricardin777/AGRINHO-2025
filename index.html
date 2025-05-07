@@ -1,19 +1,153 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conexão Campo-Cidade</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conexão Campo-Cidade | Agrinho</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Estilos internos -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0fdf4;
+    }
+
+    header {
+      background: #2e7d32;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    main {
+      display: flex;
+      flex-direction: row;
+      height: calc(100vh - 180px);
+    }
+
+    #map {
+      flex: 3;
+      height: 100%;
+    }
+
+    #info-box {
+      flex: 1;
+      background: #ffffffdd;
+      padding: 1rem;
+      border-left: 3px solid #4caf50;
+      overflow-y: auto;
+    }
+
+    #info-box h2 {
+      color: #2e7d32;
+    }
+
+    footer {
+      background: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+      }
+
+      #map {
+        height: 300px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🌾 Conexão Campo-Cidade</h1>
+    <p>Conheça a jornada dos alimentos, do campo até sua mesa!</p>
+  </header>
+
+  <main>
     <div id="map"></div>
     <div id="info-box">
-        <h3>Informações do Local</h3>
-        <p id="product-info">Passe o mouse sobre um ícone para ver os detalhes.</p>
+      <h2>Informações</h2>
+      <p id="info">Passe o mouse sobre um marcador no mapa para ver os detalhes.</p>
     </div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+  </main>
+
+  <footer>
+    <p>Projeto Agrinho 2025 — Integrando educação, campo e tecnologia.</p>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Script JS interno -->
+  <script>
+    // Inicializa o mapa
+    const map = L.map('map').setView([-23.55, -46.63], 6); // Brasil (SP)
+
+    // Adiciona o mapa base
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Dados fictícios de conexão campo-cidade
+    const locais = [
+      {
+        nome: "Sítio Boa Esperança",
+        tipo: "Produtor Rural",
+        produto: "Alface, tomate, cenoura",
+        localizacao: [-22.9, -46.3]
+      },
+      {
+        nome: "Escola Municipal Central",
+        tipo: "Consumidor Urbano",
+        produto: "Recebe hortaliças semanalmente",
+        localizacao: [-23.55, -46.63]
+      },
+      {
+        nome: "Fazenda São João",
+        tipo: "Produtor de Leite",
+        produto: "Leite e derivados artesanais",
+        localizacao: [-22.5, -47.4]
+      },
+      {
+        nome: "Feira Orgânica do Bairro Verde",
+        tipo: "Mercado Urbano",
+        produto: "Produtos orgânicos de produtores locais",
+        localizacao: [-23.6, -46.7]
+      }
+    ];
+
+    // Adiciona marcadores
+    locais.forEach(local => {
+      const marcador = L.marker(local.localizacao).addTo(map);
+
+      marcador.bindPopup(`<strong>${local.nome}</strong><br>${local.tipo}<br><em>${local.produto}</em>`);
+
+      marcador.on('mouseover', () => {
+        document.getElementById("info").innerHTML = `
+          <strong>${local.nome}</strong><br>
+          Tipo: ${local.tipo}<br>
+          Produto: ${local.produto}
+        `;
+      });
+
+      marcador.on('mouseout', () => {
+        document.getElementById("info").textContent = "Passe o mouse sobre um marcador no mapa para ver os detalhes.";
+      });
+    });
+  </script>
 </body>
 </html>
